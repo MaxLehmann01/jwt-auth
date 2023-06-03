@@ -7,6 +7,7 @@ class authLib {
 
         this.needle = require('needle');
         this.ip = require('ip');
+        this.cookieParser = require('cookie-parser');
 
         if(this.implementEndpoints == true){
             app.post('/authAPI/authorize', (req, res) => {
@@ -19,11 +20,20 @@ class authLib {
                     authData: authData
                 }
 
-                this.needle('post', `${this.authServer}/api/auth-app`, payload, { json: true })
+                let authHeader = req.headers['authorization'] ? { 'authorization': req.headers['authorization'] } : undefined;
+
+                this.needle('post', `${this.authServer}/api/auth-app`, payload, { json: true, headers: authHeader })
                     .then((response) => {
-                        console.log(response.statusCode);
-                        console.log(response.body);
-                        res.json(response.body);
+                        let tokens = response.body;
+
+                        res.cookie('jwt-auth', tokens.rt, { 
+                            httpOnly: true, 
+                            secure: true,
+                            sameSite: 'Strict',
+                            maxAge: 604800000
+                        });
+
+                        res.status(response.statusCode).json({at: tokens.at});
                     })
             });
         }

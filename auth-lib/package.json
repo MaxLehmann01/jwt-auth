@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "fs": "^0.0.1-security",
     "ip": "^1.1.8",
     "ip-address": "^8.1.0",
