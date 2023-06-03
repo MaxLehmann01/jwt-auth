@@ -1,0 +1,24 @@
+<div class="w-full h-full">
+    <div class="w-full h-[50px] shadow-xl bg-[#303030] flex items-center text-white">
+        <div class="flex-1 px-4 gap-4 flex justify-start">
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menuNavigation">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <button mat-flat-button class="bg-transparent text-white" routerLink="/">Home</button>
+        </div>
+        <div class="flex-1 px-4 gap-4 flex justify-end">
+            <button type="button" mat-raised-button color="primary" class="w-1/4">{{recordUser}}</button>
+        </div>
+    </div>
+</div>
+
+<mat-menu #menuNavigation>
+    <button routerLink="/customers" mat-menu-item>
+        <mat-icon>persons</mat-icon>
+        Customers
+    </button>
+    <button routerLink="/documentation" mat-menu-item>
+        <mat-icon>description</mat-icon>
+        Documentation
+    </button>
+</mat-menu>

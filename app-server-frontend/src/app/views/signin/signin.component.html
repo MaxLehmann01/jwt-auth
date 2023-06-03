@@ -1,0 +1,42 @@
+<div class="w-full h-full flex flex-col">
+    <div class="w-full h-[50px] shadow-xl bg-[#303030] flex items-center text-white">
+        <div class="flex-1 px-4 gap-4 flex justify-start">
+            <button mat-mini-fab color="primary" [matMenuTriggerFor]="menuNavigation">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <button mat-flat-button class="bg-transparent text-white" routerLink="/">Home</button>
+        </div>
+        <div class="flex-1 px-4 gap-4 flex justify-end"></div>
+    </div>
+    <form class="flex-1 flex items-center justify-center" (ngSubmit)="authSignIn()">
+        <mat-card class="w-1/3 h-1/3 flex flex-col">
+            <mat-card-title class="p-2">SignIn</mat-card-title>
+            <mat-divider></mat-divider>
+            <mat-card-content class="flex-1 flex flex-col gap-2 p-2">
+                <mat-form-field appearance="fill">
+                    <mat-label>Username</mat-label>
+                    <input type="text" matInput [(ngModel)]="recordCredentials.user" name="authSignInUser">
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Username</mat-label>
+                    <input type="password" matInput [(ngModel)]="recordCredentials.pass" name="authSignInPass" autocomplete="new-password">
+                </mat-form-field>
+            </mat-card-content>
+            <mat-divider></mat-divider>
+            <mat-card-actions>
+                <button type="submit" mat-raised-button color="primary" class="w-full">Signin</button>
+            </mat-card-actions>
+            <mat-card-footer>
+                <mat-progress-bar *ngIf="progressAnimation" mode="query"></mat-progress-bar>
+                <mat-progress-bar *ngIf="!progressAnimation" value="0"></mat-progress-bar>
+            </mat-card-footer>
+        </mat-card>
+    </form>
+</div>
+
+<mat-menu #menuNavigation>
+    <button routerLink="/documentation" mat-menu-item>
+        <mat-icon>description</mat-icon>
+        Documentation
+    </button>
+</mat-menu>

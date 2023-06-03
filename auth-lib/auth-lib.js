@@ -8,21 +8,39 @@ class authLib {
         this.needle = require('needle');
         this.ip = require('ip');
         this.cookieParser = require('cookie-parser');
+        this.jwt = require('jsonwebtoken');
+
+        this.app.use(this.cookieParser());
 
         if(this.implementEndpoints == true){
-            app.post('/authAPI/authorize', (req, res) => {
+            this.app.post('/authAPI/:authType?', (req, res) => {
+
+                if(!req.params.authType) {
+                    const authHeader = req.headers['authorization'];
+                    const token = authHeader && authHeader.split(' ')[1];
+            
+                    if(!token) return res.sendStatus(401);
+            
+                    return this.jwt.verify(token, process.env.JWT_AT_SECRET, (err, user) => {
+                        if(err) return res.sendStatus(403);
+                        
+                        return res.status(200).json(user);
+                    })
+                }
+
                 let authData = req.body;
 
                 let payload = {
-                    app: 'app1',
+                    app: authData.app,
                     ipClient: req.ip,
                     ipApp: this.ip.address(),
-                    authData: authData
+                    authType: req.params.authType
                 }
 
-                let authHeader = req.headers['authorization'] ? { 'authorization': req.headers['authorization'] } : undefined;
+                if(req.params.authType == 'authorize') payload.authData = authData.credentials;
+                if(req.params.authType == 'token') payload.authData = { rt: req.cookies['jwt-auth']};
 
-                this.needle('post', `${this.authServer}/api/auth-app`, payload, { json: true, headers: authHeader })
+                this.needle('post', `${this.authServer}/api/auth-app`, payload, { json: true })
                     .then((response) => {
                         let tokens = response.body;
 
@@ -37,6 +55,18 @@ class authLib {
                     })
             });
         }
+    }
+
+    authMiddleware = (req, res, next) => {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if(!token) return res.sendStatus(401);
+
+        this.jwt.verify(token, process.env.JWT_AT_SECRET, (err, user) => {
+            if(err) return res.sendStatus(403);
+            next();
+        })
     }
 }
 
